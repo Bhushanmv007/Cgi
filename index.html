@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Image Processing</h1>
+        <input type="file" id="upload" accept="image/*">
+        <div id="options" style="display: none;">
+            <label for="operation">Select Operation:</label>
+            <select id="operation">
+                <option value="none">None</option>
+                <option value="gaussianBlur">Gaussian Blur</option>
+                <option value="medianBlur">Median Blur</option>
+                <option value="sharpen">Sharpen</option>
+                <option value="edgeDetection">Edge Detection</option>
+                <option value="noiseReduction">Noise Reduction</option>
+                <option value="brightnessAdjustment">Brightness Adjustment</option>
+                <option value="contrastAdjustment">Contrast Adjustment</option>
+                <option value="histogramEqualization">Histogram Equalization</option>
+                <option value="saturationAdjustment">Saturation Adjustment</option>
+                <option value="gammaCorrection">Gamma Correction</option>
+            </select>
+            <label for="intensity">Intensity (0 to 5):</label>
+            <input type="number" id="intensity" min="0" max="5" step="0.1" value="1">
+            <button onclick="processImage()">Apply</button>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,30 +1,64 @@
+import tkinter as tk
+from tkinter import filedialog, ttk, messagebox
+from PIL import Image, ImageTk
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
 
-def load_image(image_path):
+def load_image():
+    global original_image
+    file_path = filedialog.askopenfilename()
+    if file_path:
+        image = cv2.imread(file_path)
+        if image is not None:
+            original_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            display_image(original_image, original_panel)
+
+def display_image(image, panel):
+    image = Image.fromarray(image)
+    image = ImageTk.PhotoImage(image)
+    panel.config(image=image)
+    panel.image = image
+
+def apply_filter_or_enhancement():
+    global original_image
+    if original_image is None:
+        messagebox.showerror("Error", "No image loaded")
+        return
+
     try:
-        image = cv2.imread(image_path)
-        if image is None:
-            raise FileNotFoundError("Image not found or path is incorrect")
-        return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    except Exception as e:
-        print(f"Error loading image: {e}")
-        return None
+        intensity = float(intensity_slider.get())
+    except ValueError:
+        messagebox.showerror("Error", "Invalid intensity value")
+        return
 
-def display_images(original, processed, title):
-    plt.figure(figsize=(10, 5))
-    plt.subplot(1, 2, 1)
-    plt.imshow(original)
-    plt.title('Original Image')
-    plt.axis('off')
+    if intensity < 0 or intensity > 5:
+        messagebox.showerror("Error", "Intensity must be between 0 and 5")
+        return
 
-    plt.subplot(1, 2, 2)
-    plt.imshow(processed)
-    plt.title(title)
-    plt.axis('off')
+    option = option_menu_var.get()
 
-    plt.show()
+    if option == "Gaussian Blur":
+        processed_image = apply_gaussian_blur(original_image, intensity)
+    elif option == "Median Blur":
+        processed_image = apply_median_blur(original_image, intensity)
+    elif option == "Sharpen":
+        processed_image = apply_sharpen(original_image, intensity)
+    elif option == "Edge Detection":
+        processed_image = apply_edge_detection(original_image, intensity)
+    elif option == "Noise Reduction":
+        processed_image = apply_noise_reduction(original_image, intensity)
+    elif option == "Brightness Adjustment":
+        processed_image = adjust_brightness(original_image, intensity)
+    elif option == "Contrast Adjustment":
+        processed_image = adjust_contrast(original_image, intensity)
+    elif option == "Histogram Equalization":
+        processed_image = histogram_equalization(original_image, intensity)
+    elif option == "Saturation Adjustment":
+        processed_image = adjust_saturation(original_image, intensity)
+    elif option == "Gamma Correction":
+        processed_image = gamma_correction(original_image, intensity)
+
+    display_image(processed_image, processed_panel)
 
 def apply_gaussian_blur(image, intensity=1):
     ksize = int(15 * intensity)
@@ -72,7 +106,6 @@ def histogram_equalization(image, intensity=1):
     return cv2.cvtColor(img_yuv, cv2.COLOR_YUV2RGB)
 
 def adjust_saturation(image, intensity=1):
-    """Adjust saturation of the image."""
     hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
     h, s, v = cv2.split(hsv)
     s = cv2.multiply(s, intensity)
@@ -81,121 +114,45 @@ def adjust_saturation(image, intensity=1):
     return cv2.cvtColor(final_hsv, cv2.COLOR_HSV2RGB)
 
 def gamma_correction(image, gamma=1.0):
-    """Apply gamma correction to the image.
-    
-    Parameters:
-    gamma (float): Gamma correction factor. 1.0 means no change.
-    """
     invGamma = 1.0 / gamma
     table = np.array([((i / 255.0) ** invGamma) * 255
                       for i in range(256)]).astype("uint8")
     return cv2.LUT(image, table)
 
-def filter_menu(image):
-    print("Choose a filter to apply:")
-    print("1: Gaussian Blur")
-    print("2: Median Blur")
-    print("3: Sharpen")
-    print("4: Edge Detection")
-    print("5: Noise Reduction")
+# Main Application
+root = tk.Tk()
+root.title("Image Processing App")
 
-    try:
-        choice = int(input("Enter your choice: "))
-    except ValueError:
-        print("Invalid input. Please enter a number between 1 and 5.")
-        return
-    
-    try:
-        intensity = float(input("Enter the intensity (0 to 5): "))
-        if intensity < 0 or intensity > 5:
-            raise ValueError
-    except ValueError:
-        print("Invalid input. Please enter a number between 0 and 5.")
-        return
+# Global variables
+original_image = None
 
-    if choice == 1:
-        processed_image = apply_gaussian_blur(image, intensity)
-        display_images(image, processed_image, "Gaussian Blur")
-    elif choice == 2:
-        processed_image = apply_median_blur(image, intensity)
-        display_images(image, processed_image, "Median Blur")
-    elif choice == 3:
-        processed_image = apply_sharpen(image, intensity)
-        display_images(image, processed_image, "Sharpen")
-    elif choice == 4:
-        processed_image = apply_edge_detection(image, intensity)
-        display_images(image, processed_image, "Edge Detection")
-    elif choice == 5:
-        processed_image = apply_noise_reduction(image, intensity)
-        display_images(image, processed_image, "Noise Reduction")
-    else:
-        print("Invalid choice. Please select a valid option.")
+# UI Elements
+frame = tk.Frame(root)
+frame.pack(padx=10, pady=10)
 
-def enhancement_menu(image):
-    print("Choose an enhancement to apply:")
-    print("1: Brightness Adjustment")
-    print("2: Contrast Adjustment")
-    print("3: Histogram Equalization")
-    print("4: Saturation Adjust")
-    print("5: Gamma correction")
+load_button = tk.Button(frame, text="Load Image", command=load_image)
+load_button.grid(row=0, column=0, padx=5, pady=5)
 
-    try:
-        choice = int(input("Enter your choice: "))
-    except ValueError:
-        print("Invalid input. Please enter a number between 1 and 3.")
-        return
+option_menu_var = tk.StringVar()
+option_menu_var.set("Gaussian Blur")
+options = [
+    "Gaussian Blur", "Median Blur", "Sharpen", "Edge Detection", "Noise Reduction",
+    "Brightness Adjustment", "Contrast Adjustment", "Histogram Equalization",
+    "Saturation Adjustment", "Gamma Correction"
+]
+option_menu = ttk.OptionMenu(frame, option_menu_var, *options)
+option_menu.grid(row=0, column=1, padx=5, pady=5)
 
-    try:
-        intensity = float(input("Enter the intensity (0 to 5): "))
-        if intensity < 0 or intensity > 5:
-            raise ValueError
-    except ValueError:
-        print("Invalid input. Please enter a number between 0 and 5.")
-        return
+intensity_slider = tk.Scale(frame, from_=0, to_=5, resolution=0.1, orient=tk.HORIZONTAL, label="Intensity")
+intensity_slider.grid(row=0, column=2, padx=5, pady=5)
 
-    if choice == 1:
-        processed_image = adjust_brightness(image, intensity)
-        display_images(image, processed_image, "Brightness Adjustment")
-    elif choice == 2:
-        processed_image = adjust_contrast(image, intensity)
-        display_images(image, processed_image, "Contrast Adjustment")
-    elif choice == 3:
-        processed_image = histogram_equalization(image, intensity)
-        display_images(image, processed_image, "Histogram Equalization")
-    elif choice == 4:
-        processed_image = adjust_saturation(image, intensity)
-        display_images(image, processed_image, "Adjusted Saturation")
-    elif choice == 5:
-        processed_image = gamma_correction(image, intensity)
-        display_images(image, processed_image, "Adjusted Saturation")
+apply_button = tk.Button(frame, text="Apply", command=apply_filter_or_enhancement)
+apply_button.grid(row=0, column=3, padx=5, pady=5)
 
-    else:
-        print("Invalid choice. Please select a valid option.")
+original_panel = tk.Label(frame, text="Original Image")
+original_panel.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
 
-def main():
-    image_path = input("Enter the path to the image: ")
-    print(f"Loading image from: {image_path}")
-    
-    image = load_image(image_path)
-    if image is None:
-        return
-    
-    print("Choose an operation:")
-    print("1: Filter")
-    print("2: Enhancement")
+processed_panel = tk.Label(frame, text="Processed Image")
+processed_panel.grid(row=1, column=2, columnspan=2, padx=5, pady=5)
 
-    try:
-        choice = int(input("Enter your choice: "))
-    except ValueError:
-        print("Invalid input. Please enter 1 or 2.")
-        return
-
-    if choice == 1:
-        filter_menu(image)
-    elif choice == 2:
-        enhancement_menu(image)
-    else:
-        print("Invalid choice. Please select a valid option.")
-
-if __name__ == "__main__":
-    main()
+root.mainloop()
