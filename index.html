@@ -8,11 +8,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>Image Processing</h1>
-        <input type="file" id="upload" accept="image/*">
-        <div id="options" style="display: none;">
+        <h1>Image Processing & Enhancement</h1>
+        <input type="file" id="upload" accept="image/*" class="file-input">
+        <div id="options" class="options" style="display: none;">
             <label for="operation">Select Operation:</label>
-            <select id="operation">
+            <select id="operation" class="select-input">
                 <option value="none">None</option>
                 <option value="gaussianBlur">Gaussian Blur</option>
                 <option value="medianBlur">Median Blur</option>
@@ -26,11 +26,17 @@
                 <option value="gammaCorrection">Gamma Correction</option>
             </select>
             <label for="intensity">Intensity (0 to 5):</label>
-            <input type="number" id="intensity" min="0" max="5" step="0.1" value="1">
-            <button onclick="processImage()">Apply</button>
+            <input type="number" id="intensity" class="number-input" min="0" max="5" step="0.1" value="1">
+            <button onclick="processImage()" class="apply-button">Apply</button>
         </div>
         <canvas id="canvas"></canvas>
+        <div class="credits">
+            <p><h4>Aruna A Shenoy (1JT21CS019)</h4></p>
+            <p><h4>Bhushan M V (1JT21CS030)</h4></p>
+            <p><h1>Jyothy Institute Of Technology</h1></p>
+        </div>
     </div>
-    <script src="script.js"></script>
+    <script src="https://docs.opencv.org/4.x/opencv.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>

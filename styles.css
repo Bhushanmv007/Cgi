@@ -1,21 +1,119 @@
+/* Reset some default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
+    background: url('pics/New\ folder/bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
 }
 
 .container {
     text-align: center;
-    background: white;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 200px;
+    width: 90%;
+    margin: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #007BFF;
+}
+
+input[type="file"] {
+    display: block;
+    margin: 20px auto;
+    padding: 1px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+#options {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    font-size: 1rem;
+    margin: 10px 0 5px;
+}
+
+select, input[type="number"], button {
+    width: 80%;
+    max-width: 300px;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
 
 canvas {
     margin-top: 20px;
     border: 1px solid #ccc;
+    width: 75%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.credits {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #666;
+}
+
+.credits p {
+    margin: 5px 0;
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 800px;
+    }
+    
+    input[type="file"], select, input[type="number"], button {
+        width: 60%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1000px;
+    }
+    
+    input[type="file"], select, input[type="number"], button {
+        width: 50%;
+    }
 }
